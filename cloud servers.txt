@@ -1,0 +1,4 @@
+1.  https://www.loracloud.com/documentation/geolocation 
+2. https://www.ibm.com/cloud/pricing 
+3. https://www.oracle.com/cloud/ 
+4. https://www.digitalocean.com/
