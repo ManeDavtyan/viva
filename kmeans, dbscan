@@ -1,0 +1,59 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.metrics import roc_curve, auc, accuracy_score
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+
+# Load your DataFrame (assuming it's named 'df') and inspect the data
+# df = pd.read_csv('your_data.csv')  # Replace 'your_data.csv' with your actual data file
+
+# Assuming 'HttpHost' is the column you want to use for clustering
+X = df[['HttpHost']]
+
+# Encode categorical variables if needed
+le = LabelEncoder()
+X['HttpHost'] = le.fit_transform(X['HttpHost'])
+
+# Split the data into training and testing sets
+X_train, X_test = train_test_split(X, test_size=0.2, random_state=42)
+
+# Apply KMeans clustering
+kmeans = KMeans(n_clusters=2, random_state=42)
+X_train['kmeans_cluster'] = kmeans.fit_predict(X_train)
+X_test['kmeans_cluster'] = kmeans.predict(X_test)
+
+# Apply DBSCAN clustering
+dbscan = DBSCAN(eps=0.5, min_samples=5)
+X_train['dbscan_cluster'] = dbscan.fit_predict(X_train)
+X_test['dbscan_cluster'] = dbscan.fit_predict(X_test)
+
+# Evaluate KMeans clustering
+kmeans_accuracy = accuracy_score(X_test['kmeans_cluster'], kmeans.predict(X_test))
+
+# Evaluate DBSCAN clustering
+dbscan_accuracy = accuracy_score(X_test['dbscan_cluster'], dbscan.predict(X_test))
+
+# Print accuracy scores
+print("KMeans Accuracy:", kmeans_accuracy)
+print("DBSCAN Accuracy:", dbscan_accuracy)
+
+# ROC curve and AUC for KMeans
+fpr_kmeans, tpr_kmeans, _ = roc_curve(X_test['kmeans_cluster'], kmeans.predict(X_test))
+roc_auc_kmeans = auc(fpr_kmeans, tpr_kmeans)
+
+# ROC curve and AUC for DBSCAN
+fpr_dbscan, tpr_dbscan, _ = roc_curve(X_test['dbscan_cluster'], dbscan.predict(X_test))
+roc_auc_dbscan = auc(fpr_dbscan, tpr_dbscan)
+
+# Plot ROC curves
+plt.figure(figsize=(8, 8))
+plt.plot(fpr_kmeans, tpr_kmeans, color='darkorange', lw=2, label=f'KMeans ROC curve (AUC = {roc_auc_kmeans:.2f})')
+plt.plot(fpr_dbscan, tpr_dbscan, color='darkgreen', lw=2, label=f'DBSCAN ROC curve (AUC = {roc_auc_dbscan:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curves for KMeans and DBSCAN')
+plt.legend(loc='lower right')
+plt.show()
