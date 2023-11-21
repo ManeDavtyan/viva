@@ -52,3 +52,36 @@ plt.ylabel('True Positive Rate')
 plt.title('ROC Curves for KMeans and DBSCAN')
 plt.legend(loc='lower right')
 plt.show()
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+
+# Create a DataFrame
+data = {'HttpHost': ['138975r3', 'khcvb.com', '1028etbnkdcnwhvcd']}
+df = pd.DataFrame(data)
+
+# Encode categorical variables
+le = LabelEncoder()
+df['HttpHost'] = le.fit_transform(df['HttpHost'])
+
+# Apply KMeans clustering on the entire dataset with 10 clusters
+kmeans = KMeans(n_clusters=10, random_state=42)
+df['cluster'] = kmeans.fit_predict(df[['HttpHost']])
+
+# Visualize the clusters
+plt.scatter(df['HttpHost'], [0] * len(df), c=df['cluster'], cmap='viridis', marker='o', s=100)
+plt.title('Visualization of Clusters')
+plt.xlabel('HttpHost')
+plt.show()
+
