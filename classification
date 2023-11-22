@@ -56,3 +56,33 @@ new_predictions = classifier.predict(new_http_hosts_tfidf)
 # Display the predictions
 for http_host, prediction in zip(new_http_hosts, new_predictions):
     print(f"HTTP Host: {http_host} - Predicted Protocol: {prediction}")
+
+
+
+
+
+
+import joblib
+
+# Save the trained model and vectorizer to files
+model_filename = 'protocol_classifier_model.joblib'
+vectorizer_filename = 'protocol_tfidf_vectorizer.joblib'
+
+# Save the model
+joblib.dump(classifier, model_filename)
+
+# Save the TF-IDF vectorizer
+joblib.dump(vectorizer, vectorizer_filename)
+
+print(f"Trained model and vectorizer saved to {model_filename} and {vectorizer_filename}")
+
+
+
+
+
+# Load the trained model and vectorizer from files
+loaded_classifier = joblib.load('protocol_classifier_model.joblib')
+loaded_vectorizer = joblib.load('protocol_tfidf_vectorizer.joblib')
+
+# Now, you can use loaded_classifier and loaded_vectorizer for predictions on new data
+
