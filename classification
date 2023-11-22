@@ -37,3 +37,22 @@ print("\nConfusion Matrix:")
 print(conf_matrix)
 print("\nClassification Report:")
 print(class_report)
+
+
+
+
+
+# Assuming you already have a trained model (classifier) and vectorizer from the previous code
+
+# New HTTP host value(s) to predict
+new_http_hosts = ["new_http_host_1.com", "new_http_host_2.com", "new_http_host_3.com"]
+
+# Vectorize the new HTTP hosts using the same TF-IDF vectorizer
+new_http_hosts_tfidf = vectorizer.transform(new_http_hosts)
+
+# Make predictions using the trained classifier
+new_predictions = classifier.predict(new_http_hosts_tfidf)
+
+# Display the predictions
+for http_host, prediction in zip(new_http_hosts, new_predictions):
+    print(f"HTTP Host: {http_host} - Predicted Protocol: {prediction}")
