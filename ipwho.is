@@ -1,0 +1,24 @@
+import pandas as pd
+import requests
+
+# Assuming your DataFrame is named df and has a column named 'ip_address'
+df = pd.DataFrame({'ip_address': ['8.8.8.8', '208.67.222.222', '1.1.1.1']})  # Replace with your actual data
+
+# Your Yandex Places API key
+yandex_api_key = '5d128485-cb2a-47fb-8fd8-c8fdd4c92440'
+
+# Function to get geolocation information for an IP address
+def get_geolocation_info(ip_address):
+    api_url = f'https://ipwhois.api.letsvalidate.com/api/v1/{ip_address}?api_key={yandex_api_key}'  # Adjust the API endpoint as needed
+    response = requests.get(api_url)
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None  # Handle errors as needed
+
+# Add a new column to store the geolocation information
+df['geolocation_info'] = df['ip_address'].apply(get_geolocation_info)
+
+# Print the DataFrame with the new geolocation_info column
+print(df)
