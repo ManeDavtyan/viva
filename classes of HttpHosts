@@ -1,0 +1,28 @@
+import pandas as pd
+import re
+
+# Sample DataFrame
+data = {'HttpHost': ['khvivd.com', 'vcwivi1308yrhive.xs.ojvb.net', '32.384.34.293', '^bouvwodc.ofv.com', 'www.odhvoevwucow.sg', 'www.odvcowevuc .com', 'www.idcvowdcu .sg', 'ivwewdcvo', 'njd.ojdubcouebc.pi']}
+df = pd.DataFrame(data)
+
+# Define regular expressions for each class
+regex_class1 = r'^[a-zA-Z]+$'
+regex_class2 = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
+regex_class3 = r'^\d+$'
+regex_class4 = r'^[a-zA-Z]{3}\.[a-zA-Z]+\.[a-zA-Z]{2,3}$'
+regex_class5 = r'^\^.+\.[a-zA-Z]{2,3}$'
+regex_class6 = r'^\s*$'
+
+# Apply the regular expressions to the 'HttpHost' column
+df['Class'] = df['HttpHost'].apply(lambda x: 
+    'Class 1' if re.match(regex_class1, x) else
+    'Class 2' if re.match(regex_class2, x) else
+    'Class 3' if re.match(regex_class3, x) else
+    'Class 4' if re.match(regex_class4, x) else
+    'Class 5' if re.match(regex_class5, x) else
+    'Class 6' if re.match(regex_class6, x) else
+    'Not Matched'
+)
+
+# Display the result
+print(df)
