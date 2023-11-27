@@ -2,7 +2,7 @@ import pandas as pd
 import re
 
 # Sample DataFrame
-data = {'HttpHost': ['khvivd.com', 'vcwivi1308yrhive.xs.ojvb.net', '32.384.34.293', '^bouvwodc.ofv.com', 'www.odhvoevwucow.sg', 'www.odvcowevuc .com', 'www.idcvowdcu .sg', 'ivwewdcvo', 'njd.ojdubcouebc.pi']}
+data = {'HttpHost': ['khvivd.com', 'vcwivi1308yrhive.xs.ojvb.net', '32.384.34.293', '^bouvwodc.ofv.com', 'www.odhvoevwucow.sg', 'www.odvcowevuc .com', 'www.idcvowdcu .sg', 'ivwewdcvo', 'njd.ojdubcouebc.pi', 'ougoubwv.com', 'ougouwvdbcov.ru']}
 df = pd.DataFrame(data)
 
 # Define regular expressions for each class
@@ -12,6 +12,7 @@ regex_class3 = r'^\d+$'
 regex_class4 = r'^[a-zA-Z]{3}\.[a-zA-Z]+\.[a-zA-Z]{2,3}$'
 regex_class5 = r'^\^.+\.[a-zA-Z]{2,3}$'
 regex_class6 = r'^\s*$'
+regex_class7 = r'^.*[.][a-zA-Z0-9]{2,3}$'  # Updated for Class 7
 
 # Apply the regular expressions to the 'HttpHost' column
 df['Class'] = df['HttpHost'].apply(lambda x: 
@@ -21,6 +22,7 @@ df['Class'] = df['HttpHost'].apply(lambda x:
     'Class 4' if re.match(regex_class4, x) else
     'Class 5' if re.match(regex_class5, x) else
     'Class 6' if re.match(regex_class6, x) else
+    'Class 7' if re.match(regex_class7, x) else
     'Not Matched'
 )
 
