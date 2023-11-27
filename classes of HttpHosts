@@ -68,3 +68,10 @@ regex_class5 = r'^\^.+\.[a-zA-Z]{2,3}$'
 regex_class6 = r'^\s*"\s*"$'
 regex_class7 = r'^[a-zA-Z0-9.]+(?:[a-zA-Z0-9]+[.])*[a-zA-Z]{2,5}$'  # Letters, numbers, characters, and dots
 regex_class8 = r'^[a-zA-Z0-9]+$'  # Mix of numbers and letters (no characters)
+
+
+
+
+
+regex_class7 = r'^[a-zA-Z0-9.-]+$'  # Letters, numbers, characters, and dots
+
