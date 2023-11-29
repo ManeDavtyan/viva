@@ -1,10 +1,8 @@
-# viva
-
-
-import sys,os,os.path
-os.environ['HTTP_PROXY']="http://proxy.example.com:80"
-os.environ['HTTPS_PROXY']="https://proxy.example.com:443"
-
+import os
+os.environ['http_proxy']= "http://user:passwd@host:port"
+os.environ['https_proxy']= "https://user:passwd@host:port"
+os.environ['HTTP_PROXY']= os.environ['http_proxy']
+os.environ['HTTPS_PROXY']= os.environ['https_proxy']
 
 %env
 
