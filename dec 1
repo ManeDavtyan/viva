@@ -1,32 +1,16 @@
-import pandas as pd
-
-# Example DataFrame
-data = {'HttpHost': ["yscdiqe", "23.846.20.837", "12972459", "www.ugcfve.com", "^01t29e719.owugw", "", "862rfvo9u1-jbvwio.com"],
-        'Class': ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7"],
-        'OtherColumn': [1, 2, 3, 4, 5, 6, 7]}
-df = pd.DataFrame(data)
-
-# Define a function to extract parts after a dot and drop the first part
-def extract_and_drop_first(http_host):
-    pattern = r'.([^\.]+)'
-    extracted_parts = pd.Series(http_host).str.extractall(pattern)[0].tolist()
-    return extracted_parts[1:] if extracted_parts else []
-
-# Extract and drop first for Class 5
-class_5_df = df[df['Class'] == 'Class 5']
-class_5_extracted_df = class_5_df['HttpHost'].apply(extract_and_drop_first).reset_index()
-class_5_extracted_df['Protocol'] = 'Class5'
-
-# Extract and drop first for Class 4
-class_4_df = df[df['Class'] == 'Class 4']
-class_4_extracted_df = class_4_df['HttpHost'].apply(extract_and_drop_first).reset_index()
-class_4_extracted_df['Protocol'] = 'Class4'
-
-# Merge the extracted DataFrames
-extracted_df = pd.concat([class_5_extracted_df, class_4_extracted_df], ignore_index=True)
-
-# Rename the columns to match the desired structure
-extracted_df.columns = ['ID', 'ExtractedValues', 'Protocol']
-
-# Display the extracted DataFrame
-print(extracted_df)
+	ID	ExtractedValues	Class
+0	6	[init, cedexis-radar, net]	Class5
+1	11	[safeframe, googlesyndication, com]	Class5
+2	14	[ds, metric, gstatic, com]	Class5
+3	15	[safeframe, googlesyndication, com]	Class5
+4	16	[akamaihd, net]	Class5
+5	17	[safeframe, googlesyndication, com]	Class5
+6	26	[init, cedexis-radar, net]	Class5
+7	27	[metric, gstatic, com]	Class5
+8	29	[xz, fbcdn, net]	Class5
+9	30	[metric, gstatic, com]	Class5
+10	32	[xz, fbcdn, net]	Class5
+11	33	[safeframe, googlesyndication, com]	Class5
+12	34	[init, cedexis-radar, net]	Class5
+13	37	[safeframe, googlesyndication, com]	Class5
+14	39	[safeframe, googlesyndication, com]	Class5
