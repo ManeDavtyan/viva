@@ -1,26 +1,22 @@
 import pandas as pd
 
-# Assuming df is your DataFrame with 'HttpHost' column
-# Example data
+# Example DataFrame
 data = {'HttpHost': ["yscdiqe", "23.846.20.837", "12972459", "www.ugcfve.com", "^01t29e719.owugw", "", "862rfvo9u1-jbvwio.com"],
+        'Class': ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7"],
         'OtherColumn': [1, 2, 3, 4, 5, 6, 7]}
 df = pd.DataFrame(data)
 
-# Define regular expressions for Class 4 and Class 5
-class_4_pattern = '^www\.|[a-zA-Z0-9\.]+$'
-class_5_pattern = '^\^[\w\d\s\W]+$'
+# Define a function to extract parts after a dot
+def extract_parts(http_host):
+    pattern = r'.([^\.]+)'
+    return pd.Series(http_host).str.extractall(pattern)[0].tolist()
 
-# Extract components of Class 4 and Class 5 and store them in new columns
-def extract_components(http_host, class_pattern):
-    if pd.notna(http_host) and pd.notna(class_pattern) and pd.Series(http_host).str.contains(class_pattern).any():
-        components = pd.Series(http_host).str.extract(class_pattern, expand=False)
-        components = components.str.split('.').apply(lambda x: x[1:] if x else x)
-        return components
-    return pd.Series([None] * len(http_host))
+# Filter the DataFrame for Class 4 or 5
+filtered_df = df[df['Class'].isin(['Class 4', 'Class 5'])]
 
-# Apply the function to create new columns for Class 4 and Class 5 components
-df[['Class4_Part1', 'Class4_Part2']] = df['HttpHost'].apply(lambda x: extract_components(x, class_4_pattern)).fillna('')
-df[['Class5_Part1', 'Class5_Part2']] = df['HttpHost'].apply(lambda x: extract_components(x, class_5_pattern)).fillna('')
+# Apply the extraction function to the 'HttpHost' column
+extracted_parts_df = filtered_df['HttpHost'].apply(extract_parts).reset_index()
 
-# Display the DataFrame with the new columns
-print(df[['HttpHost', 'Class4_Part1', 'Class4_Part2', 'Class5_Part1', 'Class5_Part2', 'OtherColumn']])
+# Display the extracted parts along with IDs
+for idx, row in extracted_parts_df.iterrows():
+    print(f"ID: {row['index']}, Extracted Parts: {row[0]}")
