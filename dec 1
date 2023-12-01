@@ -6,17 +6,20 @@ data = {'HttpHost': ["yscdiqe", "23.846.20.837", "12972459", "www.ugcfve.com", "
         'OtherColumn': [1, 2, 3, 4, 5, 6, 7]}
 df = pd.DataFrame(data)
 
-# Define a function to extract parts after a dot
-def extract_parts(http_host):
+# Define a function to extract parts after a dot and drop the first part
+def extract_and_drop_first(http_host):
     pattern = r'.([^\.]+)'
-    return pd.Series(http_host).str.extractall(pattern)[0].tolist()
+    extracted_parts = pd.Series(http_host).str.extractall(pattern)[0].tolist()
+    return extracted_parts[1:] if extracted_parts else []
 
-# Filter the DataFrame for Class 4 or 5
-filtered_df = df[df['Class'].isin(['Class 4', 'Class 5'])]
+# Extract and drop first for Class 4
+class_4_df = df[df['Class'] == 'Class 4']
+class_4_extracted_df = class_4_df['HttpHost'].apply(extract_and_drop_first).reset_index()
+for idx, row in class_4_extracted_df.iterrows():
+    print(f"ID: {row['index']}, Extracted Parts for Class 4: {row[0]}")
 
-# Apply the extraction function to the 'HttpHost' column
-extracted_parts_df = filtered_df['HttpHost'].apply(extract_parts).reset_index()
-
-# Display the extracted parts along with IDs
-for idx, row in extracted_parts_df.iterrows():
-    print(f"ID: {row['index']}, Extracted Parts: {row[0]}")
+# Extract and drop first for Class 5
+class_5_df = df[df['Class'] == 'Class 5']
+class_5_extracted_df = class_5_df['HttpHost'].apply(extract_and_drop_first).reset_index()
+for idx, row in class_5_extracted_df.iterrows():
+    print(f"ID: {row['index']}, Extracted Parts for Class 5: {row[0]}")
