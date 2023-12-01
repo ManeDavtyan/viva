@@ -1,0 +1,26 @@
+import pandas as pd
+
+# Assuming df is your DataFrame with 'HttpHost' column
+# Example data
+data = {'HttpHost': ["yscdiqe", "23.846.20.837", "12972459", "www.ugcfve.com", "^01t29e719.owugw", "", "862rfvo9u1-jbvwio.com"],
+        'OtherColumn': [1, 2, 3, 4, 5, 6, 7]}
+df = pd.DataFrame(data)
+
+# Define regular expressions for Class 4 and Class 5
+class_4_pattern = '^www\.|[a-zA-Z0-9\.]+$'
+class_5_pattern = '^\^[\w\d\s\W]+$'
+
+# Extract components of Class 4 and Class 5 and store them in new columns
+def extract_components(http_host, class_pattern):
+    if pd.notna(http_host) and pd.notna(class_pattern) and pd.Series(http_host).str.contains(class_pattern).any():
+        components = pd.Series(http_host).str.extract(class_pattern, expand=False)
+        components = components.str.split('.').apply(lambda x: x[1:] if x else x)
+        return components
+    return pd.Series([None] * len(http_host))
+
+# Apply the function to create new columns for Class 4 and Class 5 components
+df[['Class4_Part1', 'Class4_Part2']] = df['HttpHost'].apply(lambda x: extract_components(x, class_4_pattern)).fillna('')
+df[['Class5_Part1', 'Class5_Part2']] = df['HttpHost'].apply(lambda x: extract_components(x, class_5_pattern)).fillna('')
+
+# Display the DataFrame with the new columns
+print(df[['HttpHost', 'Class4_Part1', 'Class4_Part2', 'Class5_Part1', 'Class5_Part2', 'OtherColumn']])
