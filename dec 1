@@ -12,20 +12,21 @@ def extract_and_drop_first(http_host):
     extracted_parts = pd.Series(http_host).str.extractall(pattern)[0].tolist()
     return extracted_parts[1:] if extracted_parts else []
 
-# Create an empty DataFrame to store extracted values
-extracted_df = pd.DataFrame(columns=['ID', 'Protocol', 'ExtractedValues', 'Class'])
+# Extract and drop first for Class 5
+class_5_df = df[df['Class'] == 'Class 5']
+class_5_extracted_df = class_5_df['HttpHost'].apply(extract_and_drop_first).reset_index()
+class_5_extracted_df['Protocol'] = 'Class5'
 
-# Iterate over each class and extract values
-for class_name in ['Class 4', 'Class 5']:
-    class_df = df[df['Class'] == class_name]
-    extracted_values_df = class_df['HttpHost'].apply(extract_and_drop_first).reset_index()
-    
-    # Add data to the extracted DataFrame
-    extracted_data = {'ID': extracted_values_df['index'],
-                      'Protocol': class_name.split()[1],  # Extract protocol from class name
-                      'ExtractedValues': extracted_values_df[0],
-                      'Class': class_name}
-    extracted_df = pd.concat([extracted_df, pd.DataFrame(extracted_data)], ignore_index=True)
+# Extract and drop first for Class 4
+class_4_df = df[df['Class'] == 'Class 4']
+class_4_extracted_df = class_4_df['HttpHost'].apply(extract_and_drop_first).reset_index()
+class_4_extracted_df['Protocol'] = 'Class4'
+
+# Merge the extracted DataFrames
+extracted_df = pd.concat([class_5_extracted_df, class_4_extracted_df], ignore_index=True)
+
+# Rename the columns to match the desired structure
+extracted_df.columns = ['ID', 'ExtractedValues', 'Protocol']
 
 # Display the extracted DataFrame
 print(extracted_df)
