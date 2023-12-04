@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
+from sklearn.cluster import KMeans
 
 # Assuming extracted_df is your DataFrame with a column 'Value'
 extracted_df['Value'] = extracted_df['Value'].astype('str')
@@ -24,8 +25,9 @@ else:
     cosine_sim = cosine_similarity(X_non_zero, X_non_zero)
 
     # Apply hierarchical clustering
-    clustering = AgglomerativeClustering(n_clusters=10, affinity='cosine', linkage='complete')
-    clusters = clustering.fit_predict(cosine_sim)
+    kmeans = KMeans(n_clusters=10)
+    clusters = kmeans.fit_predict(X)
+
 
     # Assign cluster labels to original DataFrame
     extracted_df.loc[non_zero_rows, 'Cluster'] = clusters
