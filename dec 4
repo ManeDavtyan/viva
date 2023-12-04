@@ -1,0 +1,76 @@
+Link -> https://datascience.stackexchange.com/questions/117374/cluster-urls-based-on-their-pattern
+
+
+
+string distance
+
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import AgglomerativeClustering
+import numpy as np
+
+# Example DataFrame
+data = {'ID': [0, 11, 14, 15, 16, 17, 26, 27, 29, 30, 32, 33, 34, 37, 39],
+        'ExtractedValues': [['cedexis-radar', 'net'],
+                             [ 'googlesyndication', 'com'],
+                             [ 'gstatic', 'com'],
+                             [ 'googlesyndication', 'com'],
+                             ['akamaihd'],
+                             [ 'googlesyndication'],
+                             ['cedexis-radar'],
+                             [ 'gstatic'],
+                             ['fbcdn'],
+                             ['gstatic'],
+                             ['fbcdn'],
+                             ['googlesyndication'],
+                             ['cedexis-radar'],
+                             ['googlesyndication'],
+                             ['googlesyndication']],
+        'Class': ['Class5'] * 15}
+
+df = pd.DataFrame(data)
+
+# Convert list of tokens to string
+df['URL'] = df['ExtractedValues'].apply(lambda tokens: ' '.join(tokens))
+
+# Vectorize URLs using TF-IDF
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(df['URL'])
+
+# Calculate cosine similarity between URLs
+cosine_sim = cosine_similarity(X, X)
+
+# Apply hierarchical clustering
+clustering = AgglomerativeClustering(n_clusters=7, affinity='cosine', linkage='complete')
+df['Cluster'] = clustering.fit_predict(cosine_sim)
+
+# Display the result
+print(df[['ID', 'URL', 'Cluster']])
+
+
+# import matplotlib.pyplot as plt
+# from scipy.cluster.hierarchy import dendrogram, linkage
+
+# # Calculate linkage matrix
+# Z = linkage(cosine_sim, 'complete')
+
+# # Plot dendrogram
+# plt.figure(figsize=(10, 5))
+# dendrogram(Z)
+# plt.show()
+
+silhouette score maxima shows the number of desired clusters
+from sklearn.metrics import silhouette_score
+
+silhouette_scores = []
+for i in range(2, 11):
+    clustering = AgglomerativeClustering(n_clusters=i, affinity='cosine', linkage='complete')
+    df['Cluster'] = clustering.fit_predict(cosine_sim)
+    silhouette_scores.append(silhouette_score(cosine_sim, df['Cluster']))
+
+# Plot silhouette scores
+plt.plot(range(2, 11), silhouette_scores, marker='o')
+plt.xlabel('Number of clusters')
+plt.ylabel('Silhouette Score')
+plt.show()
