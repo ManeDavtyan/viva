@@ -1,76 +1,34 @@
-Link -> https://datascience.stackexchange.com/questions/117374/cluster-urls-based-on-their-pattern
-
-
-
-string distance
-
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
 
-# Example DataFrame
-data = {'ID': [0, 11, 14, 15, 16, 17, 26, 27, 29, 30, 32, 33, 34, 37, 39],
-        'ExtractedValues': [['cedexis-radar', 'net'],
-                             [ 'googlesyndication', 'com'],
-                             [ 'gstatic', 'com'],
-                             [ 'googlesyndication', 'com'],
-                             ['akamaihd'],
-                             [ 'googlesyndication'],
-                             ['cedexis-radar'],
-                             [ 'gstatic'],
-                             ['fbcdn'],
-                             ['gstatic'],
-                             ['fbcdn'],
-                             ['googlesyndication'],
-                             ['cedexis-radar'],
-                             ['googlesyndication'],
-                             ['googlesyndication']],
-        'Class': ['Class5'] * 15}
+# Assuming extracted_df is your DataFrame with a column 'Value'
+extracted_df['Value'] = extracted_df['Value'].astype('str')
+unique_values = extracted_df['Value'].unique()
 
-df = pd.DataFrame(data)
-
-# Convert list of tokens to string
-df['URL'] = df['ExtractedValues'].apply(lambda tokens: ' '.join(tokens))
-
-# Vectorize URLs using TF-IDF
+# Vectorize unique values using TF-IDF
 vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df['URL'])
+X = vectorizer.fit_transform(unique_values)
 
-# Calculate cosine similarity between URLs
-cosine_sim = cosine_similarity(X, X)
+# Check if any row has all zero values
+non_zero_rows = np.array(np.sum(X, axis=1)).flatten() != 0
+X_non_zero = X[non_zero_rows]
 
-# Apply hierarchical clustering
-clustering = AgglomerativeClustering(n_clusters=7, affinity='cosine', linkage='complete')
-df['Cluster'] = clustering.fit_predict(cosine_sim)
+if X_non_zero.shape[0] == 0:
+    # Handle the case where there are no non-zero vectors
+    print("No non-zero vectors to cluster.")
+else:
+    # Calculate cosine similarity between vectors
+    cosine_sim = cosine_similarity(X_non_zero, X_non_zero)
 
-# Display the result
-print(df[['ID', 'URL', 'Cluster']])
+    # Apply hierarchical clustering
+    clustering = AgglomerativeClustering(n_clusters=10, affinity='cosine', linkage='complete')
+    clusters = clustering.fit_predict(cosine_sim)
 
+    # Assign cluster labels to original DataFrame
+    extracted_df.loc[non_zero_rows, 'Cluster'] = clusters
 
-# import matplotlib.pyplot as plt
-# from scipy.cluster.hierarchy import dendrogram, linkage
-
-# # Calculate linkage matrix
-# Z = linkage(cosine_sim, 'complete')
-
-# # Plot dendrogram
-# plt.figure(figsize=(10, 5))
-# dendrogram(Z)
-# plt.show()
-
-silhouette score maxima shows the number of desired clusters
-from sklearn.metrics import silhouette_score
-
-silhouette_scores = []
-for i in range(2, 11):
-    clustering = AgglomerativeClustering(n_clusters=i, affinity='cosine', linkage='complete')
-    df['Cluster'] = clustering.fit_predict(cosine_sim)
-    silhouette_scores.append(silhouette_score(cosine_sim, df['Cluster']))
-
-# Plot silhouette scores
-plt.plot(range(2, 11), silhouette_scores, marker='o')
-plt.xlabel('Number of clusters')
-plt.ylabel('Silhouette Score')
-plt.show()
+    # Display the result
+    print(extracted_df[['ID', 'Value', 'Cluster']])
