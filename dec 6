@@ -1,0 +1,65 @@
+To analyze the HTTP host column based on usage, particularly focusing on upload and download data, you can follow these steps:
+
+Summary Statistics:
+
+You've provided summary statistics for both the "Upload" and "Download" columns. These statistics give you an overall understanding of the distribution of the data.
+Visualization:
+
+Visualize the distribution of "Upload" and "Download" using histograms or box plots. This will help you understand the spread of the data and identify any outliers.
+python
+Copy code
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Histogram for Upload
+plt.figure(figsize=(10, 6))
+sns.histplot(df['Upload'], bins=50, kde=True)
+plt.title('Upload Data Distribution')
+plt.xlabel('Upload')
+plt.show()
+
+# Histogram for Download
+plt.figure(figsize=(10, 6))
+sns.histplot(df['Download'], bins=50, kde=True)
+plt.title('Download Data Distribution')
+plt.xlabel('Download')
+plt.show()
+Outliers:
+
+Identify and analyze outliers in both "Upload" and "Download" columns. Outliers can significantly impact the mean and standard deviation.
+python
+Copy code
+# Box plot for Upload
+plt.figure(figsize=(10, 6))
+sns.boxplot(x=df['Upload'])
+plt.title('Upload Data Boxplot')
+plt.xlabel('Upload')
+plt.show()
+
+# Box plot for Download
+plt.figure(figsize=(10, 6))
+sns.boxplot(x=df['Download'])
+plt.title('Download Data Boxplot')
+plt.xlabel('Download')
+plt.show()
+Top Hosts by Usage:
+
+Identify the top hosts based on both upload and download data. This can give insights into which hosts contribute the most to your network traffic.
+python
+Copy code
+top_upload_hosts = df.groupby('HttpHost')['Upload'].sum().nlargest(10)
+top_download_hosts = df.groupby('HttpHost')['Download'].sum().nlargest(10)
+
+print("Top Upload Hosts:\n", top_upload_hosts)
+print("\nTop Download Hosts:\n", top_download_hosts)
+Conclusion:
+
+Based on the analysis, you can draw conclusions about the distribution of upload and download data, identify outliers, and understand the hosts that contribute the most to the network traffic.
+Remember to replace df with your actual DataFrame variable. Additionally, ensure that you have the necessary libraries installed (matplotlib, seaborn).
+
+
+
+
+
+
+
